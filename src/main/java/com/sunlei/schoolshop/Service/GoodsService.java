@@ -12,4 +12,5 @@ public interface GoodsService {
      Goods addGoods(Goods Goods);
      Goods updateGoods(Goods Goods);
      void delectGoods(Goods Goods);
+      List<Goods> getCanBuyGoods();
 }

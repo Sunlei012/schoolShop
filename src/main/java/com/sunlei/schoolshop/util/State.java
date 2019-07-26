@@ -1,22 +1,32 @@
 package com.sunlei.schoolshop.util;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
 public class State {
-    private Integer errorNum;
-    private String errorDetail;
-
-    public Integer getErrorNum() {
-        return errorNum;
+    private Integer requestNum;
+    private String requestDetail;
+    private Integer resultNum;
+    private String resultDetail;
+    public Integer getRequestNum() {
+        return requestNum;
     }
 
-    public void setErrorNum(Integer errorNum) {
-        this.errorNum = errorNum;
+    public void setRequestNum(Integer requestNum) {
+        this.requestNum = requestNum;
     }
 
-    public String getErrorDetail() {
-        return errorDetail;
+    public String getRequestDetail() {
+        return requestDetail;
     }
 
-    public void setErrorDetail(String errorDetail) {
-        this.errorDetail = errorDetail;
+    public void setRequestDetail(String requestDetail) {
+        this.requestDetail = requestDetail;
     }
 }

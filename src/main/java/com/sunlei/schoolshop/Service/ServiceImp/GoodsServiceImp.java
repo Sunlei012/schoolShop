@@ -7,6 +7,7 @@ import com.sunlei.schoolshop.util.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,4 +48,16 @@ public class GoodsServiceImp implements GoodsService {
 //    public List<Goods> getGoodsByUser(){
 //
 //    }
+
+    @Override
+    public List<Goods> getCanBuyGoods(){
+        List<Goods> canBuyGoods = new ArrayList<>();
+        List<Goods> Goods = GoodsDao.findAll();
+        for (int i = 0; i < Goods.size(); i++){
+            if (Goods.get(i).getBuy()){
+                canBuyGoods.add(Goods.get(i));
+            }
+        }
+        return canBuyGoods;
+    }
 }
