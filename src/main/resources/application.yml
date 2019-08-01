@@ -8,6 +8,8 @@ spring:
     password: root
   jpa:
     hibernate:
+
       ddl-auto: update
-      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+#      database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
 

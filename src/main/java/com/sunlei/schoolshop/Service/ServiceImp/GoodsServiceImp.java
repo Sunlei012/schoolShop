@@ -3,7 +3,6 @@ package com.sunlei.schoolshop.Service.ServiceImp;
 import com.sunlei.schoolshop.Dao.GoodsDao;
 import com.sunlei.schoolshop.Entity.Goods;
 import com.sunlei.schoolshop.Service.GoodsService;
-import com.sunlei.schoolshop.util.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

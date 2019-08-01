@@ -1,23 +1,25 @@
 package com.sunlei.schoolshop.Controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sunlei.schoolshop.Annotation.PassToken;
 import com.sunlei.schoolshop.Annotation.UserLoginToken;
+import com.sunlei.schoolshop.Dao.PhoneNumDao;
+import com.sunlei.schoolshop.Entity.PhoneNum;
 import com.sunlei.schoolshop.Entity.User;
 import com.sunlei.schoolshop.Message.Response;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
 import com.sunlei.schoolshop.Message.exception.LoginException;
-import com.sunlei.schoolshop.Service.ServiceImp.UserServiceImp;
+import com.sunlei.schoolshop.Service.*;
 import com.sunlei.schoolshop.util.HttpClientUtil;
 import com.sunlei.schoolshop.util.JwtTkoen;
-import com.sunlei.schoolshop.util.State;
-import com.sunlei.schoolshop.util.UserWxConstantInterface;
+import com.sunlei.schoolshop.Config.UserWxConstantInterface;
+import com.sunlei.schoolshop.util.SendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSON;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +28,15 @@ import java.util.Map;
 @RequestMapping(value = "/User")
 public class UserController {
     @Autowired
-    private UserServiceImp userServiceImp;
+    private UserService userService;
+@Autowired
+private PhoneNumDao phoneNumDao;
 
     @PostMapping(value = "/WXLogin")
-    public Response WXLoginUser(User user){
+    public Response<String> WXLoginUser(@RequestBody User user){
         // 配置请求参数
         String s;
-        State state = new State();
+        //State state = new State();
         Map<String, String> param = new HashMap<>();
         param.put("appid", UserWxConstantInterface.WX_LOGIN_APPID);
         param.put("secret", UserWxConstantInterface.WX_LOGIN_SECRET);
@@ -50,12 +54,12 @@ public class UserController {
         Map<String, String> result = new HashMap<>();
         result.put("session_key", session_key);
         result.put("open_id", open_id);
-        if (userServiceImp.isNewUser(user)){
+        if (userService.isNewUser(user)){
             Date date = new Date();
             user.setUserNewLoginTime(new Timestamp(date.getTime()));
-            userServiceImp.updateUserLoginTime(user);
+            userService.updateUserLoginTime(user);
         }else {
-            if (!userServiceImp.addUser(user)) {
+            if (!userService.addUser(user)) {
 //                state.setResultNum(401);
 //                state.setResultDetail("登陆失败");
 //                Response response = new Response();
@@ -82,25 +86,25 @@ public class UserController {
     }
 
     @GetMapping(value = "/show/one")
-    public Response UserShowOne(@RequestParam(name = "userOpenId") String userOpenId){
-        User user = userServiceImp.findUserByOpenId(userOpenId);
+    public Response<User> UserShowOne(@RequestParam(name = "userOpenId") String userOpenId){
+        User user = userService.findUserByOpenId(userOpenId);
         return new Response<>(user);
     }
 
     @PostMapping(value = "/loginByPw")
-    public Response LoginUserByPw(@RequestParam(name = "userPassword")String userPassword,
-                            @RequestParam(name = "userPhoneNum")String userPhoneNum){
+    public Response<String> LoginUserByPw(@RequestParam(name = "userPassword")String userPassword,
+                                          @RequestParam(name = "userPhoneNum")String userPhoneNum){
         User user = new User();
-        State state = new State();
+        //State state = new State();
         HashMap<String, java.io.Serializable> result = new HashMap<>(2);
         user.setUserPassword(userPassword);
         user.setUserPhoneNum(userPhoneNum);
-        user = userServiceImp.loginByPwAndPhoneNum(user);
+        user = userService.loginByPwAndPhoneNum(user);
 //        state.setResultNum(401);
 //        state.setResultDetail("登陆失败 FAIL!");
         if (user.getUserId() != null){
-            state.setResultDetail("登陆成功 SUCCESS");
-            state.setResultNum(200);
+//            state.setResultDetail("登陆成功 SUCCESS");
+//            state.setResultNum(200);
             String token = null;
 
             try {
@@ -117,7 +121,7 @@ public class UserController {
         }else {
 //        result.put("ResultNum",state.getResultNum() );
 //        result.put("ResultDetail",state.getResultDetail());
-            Response response = new Response();
+            Response<String> response = new Response<>();
             response.setCode(LoginErrorCodeAndMsg.No_User_Login.getCode());
             response.setMsg(LoginErrorCodeAndMsg.No_User_Login.getMsg());
         //String s = JSON.toJSONString(result);
@@ -126,10 +130,31 @@ public class UserController {
     }
 
     @PostMapping(value = "/phoneVerification")
-    public User PhoneVerificationLogin(@RequestParam(name = "userPhoneNum")String userPhoneNum){
-        return null;
+    public Response<String> PhoneVerificationLogin(@RequestParam(name = "userPhoneNum")String userPhoneNum){
+        Response<String> response =  SendMessage.getPhonemsg(userPhoneNum,phoneNumDao,userService);
+        return response;
     }
-
+@PostMapping(value = "/phoneLogin")
+public Response<String> PhoneLogin(@RequestParam(name = "userPhoneNum")String userPhoneNum, @RequestParam(name = "ver")String ver){
+    PhoneNum phoneNum = new PhoneNum();
+    phoneNum = phoneNumDao.findByUserPhoneNum(userPhoneNum);
+    long nowdate = System.currentTimeMillis();
+    Response<String> response = new Response<>();
+//    Timestamp nowTime = new Timestamp(date.getTime());
+    long date =  phoneNum.getSendTime().getTime();
+    if ((phoneNum.getVerification().equals(ver)) &&((nowdate-date) <= 5*1000*24000)){
+       User user = new User();
+        user = userService.loginByPhoneNum(userPhoneNum);
+        HashMap<String, User> result = new HashMap<>(1);
+        result.put("User",user);
+        response.setData(JSON.toJSONString(result));
+        return response;
+    }else {
+        response.setCode("0001");
+        response.setMsg("登陆失败");
+        return response;
+    }
+}
     @UserLoginToken
     @GetMapping(value = "/message")
     public String message(){
@@ -144,8 +169,8 @@ public class UserController {
     public String aa(){
         User user = new User();
         user.setUserPhoneNum("13072019850");
-        user = userServiceImp.findUserByPhoneNum(user.getUserPhoneNum());
-        HashMap r = new HashMap();
+        user = userService.findUserByPhoneNum(user.getUserPhoneNum());
+        HashMap<String, User> r = new HashMap<>();
         r.put("User",user);
         return r.get("User").toString();
     }
@@ -155,11 +180,36 @@ public class UserController {
         String userPhoneNum;
         user.setUserPhoneNum("13072019850");
         HashMap result = new HashMap(3);
-        result = JwtTkoen.getAppUID(token,userServiceImp);
+        result = JwtTkoen.getAppUID(token, userService);
         user = (User) result.get("User");
         userPhoneNum = user.getUserPhoneNum();
         user.setUserPhoneNum(userPhoneNum);
-        user = userServiceImp.findUserByPhoneNum(user.getUserPhoneNum());
+        user = userService.findUserByPhoneNum(user.getUserPhoneNum());
         return user.toString();
     }
+
+    public static int daysBetween2(Date startTime, Date endTime) {
+                SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH");
+              Calendar cal = Calendar.getInstance();
+              long time1 = 0;
+              long time2 = 0;
+
+                  try{
+                        cal.setTime(sdf.parse(String.valueOf(startTime)));
+                        time1 = cal.getTimeInMillis();
+                           cal.setTime(sdf.parse(String.valueOf(endTime)));
+                         time2 = cal.getTimeInMillis();
+                     }catch(Exception e){
+//                      Response response = new Response();
+//                      response.setMsg("验证码超时");
+//                      response.setCode("0009");
+//                      throw new CommException(response);
+                      e.printStackTrace();
+
+                  }
+                long between_days=(time2-time1)/(1000*60);
+
+              return Integer.parseInt(String.valueOf(between_days));
+            }
+
 }

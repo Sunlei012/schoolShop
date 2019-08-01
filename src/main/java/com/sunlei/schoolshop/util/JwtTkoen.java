@@ -12,6 +12,7 @@ import com.sunlei.schoolshop.Message.Response;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
 import com.sunlei.schoolshop.Message.exception.LoginException;
 import com.sunlei.schoolshop.Service.ServiceImp.UserServiceImp;
+import com.sunlei.schoolshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -26,8 +27,8 @@ public class JwtTkoen {
     /** token 过期时间: 10天 */
     private static final int CALENDAR_FIELD = Calendar.DATE;
     private static final int CALENDAR_INTERVAL = 10;
-    @Autowired
-    private static UserServiceImp userServiceImp;
+    //@Autowired
+    //private static UserService userService;
     /**
      * JWT生成Token.<br/>
      *
@@ -90,7 +91,7 @@ public class JwtTkoen {
      * @param token
      * @return user_id
      */
-    public static HashMap<String, java.io.Serializable> getAppUID(String token,UserServiceImp userServiceImp) {
+    public static HashMap<String, java.io.Serializable> getAppUID(String token, UserService userService) {
         //UserServiceImp userServiceImp = new UserServiceImp();
         Map<String, Claim> claims = verifyToken(token);
         HashMap<String, java.io.Serializable> result = new HashMap<>(3);
@@ -109,7 +110,7 @@ public class JwtTkoen {
             user.setUserPhoneNum(userPhoneNum.asString());
             //state.setRequestNum(200);
             //state.setRequestDetail("验证成功");
-            user = userServiceImp.findUserByPhoneNum(user.getUserPhoneNum());
+            user = userService.findUserByPhoneNum(user.getUserPhoneNum());
             Response<User> response = new Response<>(user);
             result.put("RequestNum",response.getCode());
             result.put("RequestDetail",response.getMsg());

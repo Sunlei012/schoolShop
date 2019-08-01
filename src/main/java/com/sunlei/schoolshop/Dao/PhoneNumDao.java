@@ -6,4 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface PhoneNumDao extends JpaRepository<PhoneNum,String> {
+    PhoneNum findByUserPhoneNum(String userPhoneNum);
 }

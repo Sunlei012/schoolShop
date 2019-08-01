@@ -61,7 +61,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     userPhoneNum = user.getUserPhoneNum();
                     user.setUserPhoneNum(userPhoneNum);
                 } catch (JWTDecodeException j) {
-                    throw new RuntimeException("401");
+                    throw new RuntimeException("500");
                 }
                 user = userServiceImp.findUserByPhoneNum(user.getUserPhoneNum());
                 if (user == null) {
