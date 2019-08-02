@@ -1,12 +1,26 @@
 package com.sunlei.schoolshop.Entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * @author 孙磊
+ * 商品实体类
+ */
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
 @Entity
-public class Goods {
+public class Goods implements Serializable {
   @Id
   @GeneratedValue
   private Integer goodsId;
@@ -24,6 +38,16 @@ public class Goods {
   private Timestamp goodsUpTime;
 
   private Integer goodsCategoryId;
+
+  private Boolean isBuy = true;
+
+  public Boolean getBuy() {
+    return isBuy;
+  }
+
+  public void setBuy(Boolean buy) {
+    isBuy = buy;
+  }
 
   public Integer getGoodsId() {
     return goodsId;

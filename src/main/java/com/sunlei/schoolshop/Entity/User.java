@@ -1,12 +1,28 @@
 package com.sunlei.schoolshop.Entity;
 
+import com.sunlei.schoolshop.Annotation.PhoneNum;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Id;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
+/**
+ * @author 孙磊
+ * 用户实体类
+ */
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
 @Entity
-public class User {
+public class User implements Serializable{
     @Id
     @GeneratedValue
     private Integer userId;
@@ -20,6 +36,42 @@ public class User {
     private String userCity;
 
     private String userProvince;
+
+    private Timestamp userNewLoginTime;
+
+    private String userOpenId;
+
+    private String userCode;
+
+    private String userSessionKey;
+
+    private String userPassword;
+
+    private String userPhoneNum;
+
+    public String getUserSessionKey() {
+        return userSessionKey;
+    }
+
+    public void setUserSessionKey(String userSessionKey) {
+        this.userSessionKey = userSessionKey;
+    }
+
+    public Timestamp getUserNewLoginTime() {
+        return userNewLoginTime;
+    }
+
+    public void setUserNewLoginTime(Timestamp userNewLoginTime) {
+        this.userNewLoginTime = userNewLoginTime;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -68,4 +120,14 @@ public class User {
     public void setUserProvince(String userProvince) {
         this.userProvince = userProvince;
     }
+
+    public String getUserOpenId() {
+        return userOpenId;
+    }
+
+    public void setUserOpenId(String userOpenId) {
+        this.userOpenId = userOpenId;
+    }
+
+
 }
