@@ -3,6 +3,10 @@ package com.sunlei.schoolshop.Service;
 import com.sunlei.schoolshop.Entity.User;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author 孙磊
+ * 用户Service接口类
+ */
 @Service
 public interface UserService {
     boolean isNewUser(User user);

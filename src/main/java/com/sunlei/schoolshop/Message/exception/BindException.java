@@ -1,25 +1,21 @@
 package com.sunlei.schoolshop.Message.exception;
 
+
 import com.sunlei.schoolshop.Message.Response;
 import com.sunlei.schoolshop.Message.enums.CommErrorCodeAndMsg;
-import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
 
-/**
- * @author 孙磊
- * 统一异常处理类
- */
-public class CommException extends RuntimeException  {
+public class BindException extends RuntimeException  {
 
     private static final long serialVersionUID = 2688710331604542883L;
     private CommErrorCodeAndMsg response = null;
-    private  Response res = null;
-    public CommException(CommErrorCodeAndMsg response) {
+    private Response res = null;
+    public BindException(CommErrorCodeAndMsg response) {
         this.response = response;
     }
-    public CommException(Response res){
+    public BindException(Response res){
         this.res = res;
     }
-    public CommException(Response res,CommErrorCodeAndMsg response){
+    public BindException(Response res,CommErrorCodeAndMsg response){
         this.res = res;
         this.response = response;
     }

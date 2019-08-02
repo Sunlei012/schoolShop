@@ -11,6 +11,10 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * @author 孙磊
+ * 商品实体类
+ */
 @Setter
 @Getter
 @ToString

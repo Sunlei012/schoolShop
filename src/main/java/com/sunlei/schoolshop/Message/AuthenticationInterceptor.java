@@ -1,14 +1,13 @@
-package com.sunlei.schoolshop.Annotation;
+package com.sunlei.schoolshop.Message;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.sunlei.schoolshop.Annotation.PassToken;
+import com.sunlei.schoolshop.Annotation.UserLoginToken;
 import com.sunlei.schoolshop.Entity.User;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
 import com.sunlei.schoolshop.Message.exception.LoginException;
-import com.sunlei.schoolshop.Service.ServiceImp.UserServiceImp;
+import com.sunlei.schoolshop.Service.ServiceImp.UserServiceImpl;
 import com.sunlei.schoolshop.util.JwtTkoen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
@@ -20,9 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+/**
+ * @author 孙磊
+ * 登陆校验拦截器
+ */
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
-    private UserServiceImp userServiceImp;
+    private UserServiceImpl userServiceImpl;
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
         String token = httpServletRequest.getParameter("token");
@@ -56,14 +59,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 try {
                     //userPhoneNum = JWT.decode(token).getAudience().get(0);
                     HashMap result = new HashMap(3);
-                    result = new JwtTkoen().getAppUID(token,userServiceImp);
+                    result = new JwtTkoen().getAppUID(token, userServiceImpl);
                     user = (User) result.get("Date");
                     userPhoneNum = user.getUserPhoneNum();
                     user.setUserPhoneNum(userPhoneNum);
                 } catch (JWTDecodeException j) {
                     throw new RuntimeException("500");
                 }
-                user = userServiceImp.findUserByPhoneNum(user.getUserPhoneNum());
+                user = userServiceImpl.findUserByPhoneNum(user.getUserPhoneNum());
                 if (user == null) {
                     //throw new RuntimeException("用户不存在，请重新登录");
                     throw new LoginException(LoginErrorCodeAndMsg.No_User_Login);

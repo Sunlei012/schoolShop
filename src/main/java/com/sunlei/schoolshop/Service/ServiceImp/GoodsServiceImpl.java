@@ -10,38 +10,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author 孙磊
+ * 商品Service实现类
+ */
 @Service
-public class GoodsServiceImp implements GoodsService {
+public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
-    public GoodsDao GoodsDao;
+    public GoodsDao goodsdao;
 
 
     @Override
-    public Optional<Goods> getgoods(int GoodId){
-        return GoodsDao.findById(GoodId);
+    public Optional<Goods> getgoods(int goodid){
+        return goodsdao.findById(goodid);
     }
 
     @Override
     public List<Goods> getAllGoods(){
-        return GoodsDao.findAll();
+        return goodsdao.findAll();
     }
 
     @Override
-    public Goods addGoods(Goods Goods){
-             GoodsDao.save(Goods);
-            return GoodsDao.findById(Goods.getGoodsId()).get();
+    public Goods addGoods(Goods goods){
+             goodsdao.save(goods);
+            return goodsdao.findById(goods.getGoodsId()).get();
     }
 
     @Override
-    public Goods updateGoods(Goods Goods) {
-        GoodsDao.save(Goods);
-        return GoodsDao.findById(Goods.getGoodsId()).get();
+    public Goods updateGoods(Goods goods) {
+        goodsdao.save(goods);
+        return goodsdao.findById(goods.getGoodsId()).get();
     }
 
     @Override
-    public void delectGoods(Goods Goods){
-        GoodsDao.deleteById(Goods.getGoodsId());
+    public void delectGoods(Goods goods){
+        goodsdao.deleteById(goods.getGoodsId());
     }
 
 //    public List<Goods> getGoodsByUser(){
@@ -51,7 +55,7 @@ public class GoodsServiceImp implements GoodsService {
     @Override
     public List<Goods> getCanBuyGoods(){
         List<Goods> canBuyGoods = new ArrayList<>();
-        List<Goods> Goods = GoodsDao.findAll();
+        List<Goods> Goods = goodsdao.findAll();
         for (int i = 0; i < Goods.size(); i++){
             if (Goods.get(i).getBuy()){
                 canBuyGoods.add(Goods.get(i));

@@ -1,5 +1,6 @@
 package com.sunlei.schoolshop.Entity;
 
+import com.sunlei.schoolshop.Annotation.PhoneNum;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,10 @@ import javax.persistence.GeneratedValue;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * @author 孙磊
+ * 用户实体类
+ */
 @Setter
 @Getter
 @ToString

@@ -9,6 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
+/**
+ * @author 孙磊
+ * 手机号码验证登陆实体类
+ */
 @Setter
 @Getter
 @ToString

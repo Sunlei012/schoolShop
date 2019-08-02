@@ -1,13 +1,18 @@
-package com.sunlei.schoolshop.Message.exception;
+package com.sunlei.schoolshop.Message.exception.Handler;
 
 import com.sunlei.schoolshop.Message.Response;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
+import com.sunlei.schoolshop.Message.exception.LoginException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author 孙磊
+ * 登陆统一异常拦截器
+ */
 @ControllerAdvice
 @Slf4j
 public class ExceptionHandler {

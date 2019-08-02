@@ -28,6 +28,10 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * @author 孙磊
+ * 手机验证码发送工具类
+ */
 public class SendMessage {
     private static String code;
 //    public static void main(String[] args) {

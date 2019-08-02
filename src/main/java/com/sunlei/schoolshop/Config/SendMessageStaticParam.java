@@ -1,5 +1,9 @@
 package com.sunlei.schoolshop.Config;
 
+/**
+ * @author 孙磊
+ * 阿里云手机验证码静态参数
+ */
 public class SendMessageStaticParam {
     /**
      * 手机验证部分配置

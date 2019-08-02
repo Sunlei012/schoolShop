@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+/**
+ * @author 孙磊
+ * 统一回调参数实体类
+ */
 @Getter
 @Setter
 @JsonSerialize(include= JsonSerialize.Inclusion.NON_NULL)

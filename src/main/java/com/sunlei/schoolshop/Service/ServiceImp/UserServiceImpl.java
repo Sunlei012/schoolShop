@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Date;
 
+/**
+ * @author 孙磊
+ * 用户Service实现类
+ */
 @Service
-public class UserServiceImp implements UserService {
+public class UserServiceImpl implements UserService {
     @Autowired
     public UserDao userDao;
     @Override

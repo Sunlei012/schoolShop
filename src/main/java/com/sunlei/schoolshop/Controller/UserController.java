@@ -24,6 +24,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author 孙磊
+ * 用户相关的Controller类
+ */
 @RestController
 @RequestMapping(value = "/User")
 public class UserController {
@@ -92,9 +96,20 @@ private PhoneNumDao phoneNumDao;
     }
 
     @PostMapping(value = "/loginByPw")
-    public Response<String> LoginUserByPw(@RequestParam(name = "userPassword")String userPassword,
-                                          @RequestParam(name = "userPhoneNum")String userPhoneNum){
+    public Response<String> LoginUserByPw(@RequestParam(name = "userPassword",defaultValue = "")String userPassword,
+                                          @RequestParam(name = "userPhoneNum",defaultValue = "")String userPhoneNum){
+        if ((userPassword == null || userPassword.equals("")) || (userPhoneNum == null || userPhoneNum.equals("")))
+        {
+            //result.put("ResultNum",state.getResultNum() );
+//        result.put("ResultDetail",state.getResultDetail());
+            Response<String> response = new Response<>();
+            response.setCode(LoginErrorCodeAndMsg.No_User_Login.getCode());
+            response.setMsg(LoginErrorCodeAndMsg.No_User_Login.getMsg());
+            //String s = JSON.toJSONString(result);
+            return response;
+        }
         User user = new User();
+        user.setUserId(-1);
         //State state = new State();
         HashMap<String, java.io.Serializable> result = new HashMap<>(2);
         user.setUserPassword(userPassword);
@@ -102,8 +117,9 @@ private PhoneNumDao phoneNumDao;
         user = userService.loginByPwAndPhoneNum(user);
 //        state.setResultNum(401);
 //        state.setResultDetail("登陆失败 FAIL!");
-        if (user.getUserId() != null){
-//            state.setResultDetail("登陆成功 SUCCESS");
+        if (user != null) {
+//
+            //            state.setResultDetail("登陆成功 SUCCESS");
 //            state.setResultNum(200);
             String token = null;
 
@@ -118,15 +134,17 @@ private PhoneNumDao phoneNumDao;
             result.put("Token",token);
             Response<String> response = new Response<>(JSON.toJSONString(result));
             return response;
-        }else {
-//        result.put("ResultNum",state.getResultNum() );
-//        result.put("ResultDetail",state.getResultDetail());
-            Response<String> response = new Response<>();
-            response.setCode(LoginErrorCodeAndMsg.No_User_Login.getCode());
-            response.setMsg(LoginErrorCodeAndMsg.No_User_Login.getMsg());
+        }  //result.put("ResultNum",state.getResultNum() );
+        //        result.put("ResultDetail",state.getResultDetail());
+        //            Response<String> response = new Response<>();
+        //            response.setCode(LoginErrorCodeAndMsg.No_User_Login.getCode());
+        //            response.setMsg(LoginErrorCodeAndMsg.No_User_Login.getMsg());
         //String s = JSON.toJSONString(result);
+        //            return response;
+        Response<String> response = new Response<>();
+        response.setCode("0004");
+        response.setMsg("用户名密码错误");
         return response;
-        }
     }
 
     @PostMapping(value = "/phoneVerification")

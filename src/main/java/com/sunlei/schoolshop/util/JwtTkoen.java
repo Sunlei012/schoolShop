@@ -5,15 +5,12 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.sunlei.schoolshop.Dao.UserDao;
 import com.sunlei.schoolshop.Entity.User;
 
 import com.sunlei.schoolshop.Message.Response;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
 import com.sunlei.schoolshop.Message.exception.LoginException;
-import com.sunlei.schoolshop.Service.ServiceImp.UserServiceImp;
 import com.sunlei.schoolshop.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.Calendar;
@@ -21,6 +18,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author 孙磊
+ * Jwt验证工具类
+ */
 public class JwtTkoen {
     /** token秘钥，请勿泄露，请勿随便修改 backups:JKKLJOoasdlfj */
     private static final String SECRET = "JKKLJOoasdlfj";
