@@ -38,7 +38,7 @@ public class SendMessage {
 //        String phone = "13072019850";
 //        //此处可输入你的手机号码进行测试
 //        getPhonemsg(phone);
-//
+//1
 //    }
     public static Response<String> getPhonemsg(String mobile, PhoneNumDao phoneNumDao, UserService userService){
         /**
