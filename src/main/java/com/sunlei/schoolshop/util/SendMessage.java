@@ -24,6 +24,7 @@ import com.sunlei.schoolshop.Message.exception.LoginException;
 import com.sunlei.schoolshop.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,14 +41,15 @@ public class SendMessage {
 //        getPhonemsg(phone);
 //12
 //    }
-    public static Response<String> getPhonemsg(String mobile, PhoneNumDao phoneNumDao, UserService userService){
+
+    public static Response<String> getPhonemsg(String mobile, PhoneNumDao phoneNumDao, UserService userService , RedisUtil redisUtil){
         /**
          * 进行正则关系校验
          */
         System.out.println(mobile);
-        if (mobile == null || mobile == "") {
+        if (mobile == null || "".equals(mobile)) {
             System.out.println("手机号为空");
-            Response<String> rent = new Response<String>();
+            Response<String> rent = new Response<>();
             rent.setCode("0001");
             rent.setMsg("手机号为空");
             return rent;
@@ -102,13 +104,15 @@ public class SendMessage {
                 //HashMap j = new HashMap();
                 //j = (HashMap) JSONObject.parseObject(response.getData()).get("Code");
                 if ("OK".equals(JSONObject.parseObject(response.getData()).get("Code"))) {
+
                     System.out.println();
-                    PhoneNum phoneNum = new PhoneNum();
-                    phoneNum.setUserPhoneNum(mobile);
-                    phoneNum.setVerification(code);
+                   // PhoneNum phoneNum = new PhoneNum();
+                    //phoneNum.setUserPhoneNum(mobile);
+                    //phoneNum.setVerification(code);
                     Date date1 = new Date();
-                    phoneNum.setSendTime(new Timestamp(date1.getTime()));
-                    phoneNumDao.save(phoneNum);
+                    //phoneNum.setSendTime(new Timestamp(date1.getTime()));
+                    //phoneNumDao.save(phoneNum);
+                    redisUtil.set(mobile,code,60*5);
 //                System.out.println(rent);
                     return rent;
                 }

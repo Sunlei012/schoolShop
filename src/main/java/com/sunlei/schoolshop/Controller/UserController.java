@@ -12,11 +12,14 @@ import com.sunlei.schoolshop.Service.*;
 import com.sunlei.schoolshop.util.HttpClientUtil;
 import com.sunlei.schoolshop.util.JwtTkoen;
 import com.sunlei.schoolshop.Config.UserWxConstantInterface;
+import com.sunlei.schoolshop.util.RedisUtil;
 import com.sunlei.schoolshop.util.SendMessage;
+//import org.graalvm.compiler.hotspot.aarch64.AArch64HotSpotUnwindOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSON;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,6 +38,9 @@ public class UserController {
     private UserService userService;
 @Autowired
 private PhoneNumDao phoneNumDao;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @PostMapping(value = "/WXLogin")
     public Response<String> WXLoginUser(@RequestBody User user){
@@ -98,7 +104,7 @@ private PhoneNumDao phoneNumDao;
     @PostMapping(value = "/loginByPw")
     public Response<String> LoginUserByPw(@RequestParam(name = "userPassword",defaultValue = "")String userPassword,
                                           @RequestParam(name = "userPhoneNum",defaultValue = "")String userPhoneNum){
-        if ((userPassword == null || userPassword.equals("")) || (userPhoneNum == null || userPhoneNum.equals("")))
+        if ((userPassword == null || "".equals(userPassword)) || (userPhoneNum == null || "".equals(userPhoneNum)))
         {
             //result.put("ResultNum",state.getResultNum() );
 //        result.put("ResultDetail",state.getResultDetail());
@@ -121,7 +127,7 @@ private PhoneNumDao phoneNumDao;
 //
             //            state.setResultDetail("登陆成功 SUCCESS");
 //            state.setResultNum(200);
-            String token = null;
+            String token;
 
             try {
                 token = JwtTkoen.createToken(user);
@@ -132,8 +138,7 @@ private PhoneNumDao phoneNumDao;
 //            result.put("ResultNum",state.getResultNum());
             result.put("User", user);
             result.put("Token",token);
-            Response<String> response = new Response<>(JSON.toJSONString(result));
-            return response;
+            return new Response<>(JSON.toJSONString(result));
         }  //result.put("ResultNum",state.getResultNum() );
         //        result.put("ResultDetail",state.getResultDetail());
         //            Response<String> response = new Response<>();
@@ -149,18 +154,20 @@ private PhoneNumDao phoneNumDao;
 
     @PostMapping(value = "/phoneVerification")
     public Response<String> PhoneVerificationLogin(@RequestParam(name = "userPhoneNum")String userPhoneNum){
-        Response<String> response =  SendMessage.getPhonemsg(userPhoneNum,phoneNumDao,userService);
-        return response;
+        return SendMessage.getPhonemsg(userPhoneNum,phoneNumDao,userService,redisUtil);
     }
 @PostMapping(value = "/phoneLogin")
 public Response<String> PhoneLogin(@RequestParam(name = "userPhoneNum")String userPhoneNum, @RequestParam(name = "ver")String ver){
-    PhoneNum phoneNum = new PhoneNum();
-    phoneNum = phoneNumDao.findByUserPhoneNum(userPhoneNum);
+   // PhoneNum phoneNum = new PhoneNum();
+    //phoneNum = phoneNumDao.findByUserPhoneNum(userPhoneNum);
+    String code = redisUtil.get(userPhoneNum).toString();
     long nowdate = System.currentTimeMillis();
     Response<String> response = new Response<>();
 //    Timestamp nowTime = new Timestamp(date.getTime());
-    long date =  phoneNum.getSendTime().getTime();
-    if ((phoneNum.getVerification().equals(ver)) &&((nowdate-date) <= 5*1000*24000)){
+//    long date =  phoneNum.getSendTime().getTime();
+
+   // if ((phoneNum.getVerification().equals(ver)) &&((nowdate-date) <= 5*1000*24000)){
+    if (code != null && !"".equals(code)){
        User user = new User();
         user = userService.loginByPhoneNum(userPhoneNum);
         HashMap<String, User> result = new HashMap<>(1);
@@ -193,17 +200,18 @@ public Response<String> PhoneLogin(@RequestParam(name = "userPhoneNum")String us
         return r.get("User").toString();
     }
     @GetMapping(value = "/b")
-    public String bb(@RequestParam(name = "token") String token){
+    public String bb(@RequestParam(name = "id") Integer id){
+        int ExpireTime = 60;
         User user = new User();
-        String userPhoneNum;
-        user.setUserPhoneNum("13072019850");
-        HashMap result = new HashMap(3);
-        result = JwtTkoen.getAppUID(token, userService);
-        user = (User) result.get("User");
-        userPhoneNum = user.getUserPhoneNum();
-        user.setUserPhoneNum(userPhoneNum);
-        user = userService.findUserByPhoneNum(user.getUserPhoneNum());
-        return user.toString();
+        user.setUserId(id);
+        user.setUserName("sss");
+        user.setUserGender("男");
+        user.setUserCity("天津市");
+        user.setUserNewLoginTime(new Timestamp(System.currentTimeMillis()));
+        user.setUserPhoneNum("17694904098");
+        redisUtil.set(user.getUserPhoneNum(),user,ExpireTime);
+        return JSON.toJSONString(redisUtil.get(user.getUserPhoneNum()));
+
     }
 
     public static int daysBetween2(Date startTime, Date endTime) {
