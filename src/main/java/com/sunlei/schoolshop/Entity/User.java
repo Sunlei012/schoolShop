@@ -1,6 +1,8 @@
 package com.sunlei.schoolshop.Entity;
 
 import com.sunlei.schoolshop.Annotation.PhoneNum;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,31 +24,33 @@ import java.sql.Timestamp;
 @ToString
 @EqualsAndHashCode
 @Entity
+@ApiModel
 public class User implements Serializable{
+    @ApiModelProperty(name = "userId", value = "用户Id",example = "1")
     @Id
     @GeneratedValue
     private Integer userId;
-
+    @ApiModelProperty(name = "userHead",value = "我忘了",example = "")
     private String userHead;
-
+    @ApiModelProperty(name = "userName",value = "姓名",example = "孙磊")
     private String userName;
-
+    @ApiModelProperty(name = "userGender",value = "性别",example = "男")
     private String userGender;
-
+    @ApiModelProperty(name = "userCity",value = "城市",example = "天津市")
     private String userCity;
-
+    @ApiModelProperty(name = "userProvince",value = "省份",example = "天津市")
     private String userProvince;
-
+    @ApiModelProperty(name = "userNewLoginTime",value = "最新登陆时间")
     private Timestamp userNewLoginTime;
-
+    @ApiModelProperty(name = "userOpenId",value = "用户openId",example = "12345678")
     private String userOpenId;
-
+    @ApiModelProperty(name = "userCode",value = "前端对用户生成Id",example = "12345567")
     private String userCode;
-
+    @ApiModelProperty(name = "userSessionKey",value = "微信sessionKey",example = "123456677")
     private String userSessionKey;
-
+    @ApiModelProperty(name = "userPassword",value = "用户密码",example = "123asd")
     private String userPassword;
-
+    @ApiModelProperty(name = "userPhoneNum",value = "用户手机号",example = "17694904098")
     private String userPhoneNum;
 
     public String getUserSessionKey() {
