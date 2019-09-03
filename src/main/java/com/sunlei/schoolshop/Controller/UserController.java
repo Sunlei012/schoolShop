@@ -6,7 +6,9 @@ import com.sunlei.schoolshop.Dao.PhoneNumDao;
 import com.sunlei.schoolshop.Entity.PhoneNum;
 import com.sunlei.schoolshop.Entity.User;
 import com.sunlei.schoolshop.Message.Response;
+import com.sunlei.schoolshop.Message.enums.CommErrorCodeAndMsg;
 import com.sunlei.schoolshop.Message.enums.LoginErrorCodeAndMsg;
+import com.sunlei.schoolshop.Message.exception.CommException;
 import com.sunlei.schoolshop.Message.exception.LoginException;
 import com.sunlei.schoolshop.Service.*;
 import com.sunlei.schoolshop.util.HttpClientUtil;
@@ -15,6 +17,7 @@ import com.sunlei.schoolshop.Config.UserWxConstantInterface;
 import com.sunlei.schoolshop.util.RedisUtil;
 import com.sunlei.schoolshop.util.SendMessage;
 //import org.graalvm.compiler.hotspot.aarch64.AArch64HotSpotUnwindOp;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSON;
@@ -32,6 +35,7 @@ import java.util.Map;
  * 用户相关的Controller类
  */
 @RestController
+@Api(description = "用户相关接口")
 @RequestMapping(value = "/User")
 public class UserController {
     @Autowired
@@ -42,7 +46,12 @@ private PhoneNumDao phoneNumDao;
     @Resource
     private RedisUtil redisUtil;
 
-    @PostMapping(value = "/WXLogin")
+    @ApiOperation(value = "微信登陆" , notes = "微信登陆")
+    @ApiResponses({
+            @ApiResponse(code = 0000, message = "登陆成功"),
+            @ApiResponse(code = 9999, message = "登陆失败")
+    })
+    @PostMapping(value = "/LoginByWx")
     public Response<String> WXLoginUser(@RequestBody User user){
         // 配置请求参数
         String s;
@@ -95,9 +104,18 @@ private PhoneNumDao phoneNumDao;
         }
     }
 
-    @GetMapping(value = "/show/one")
-    public Response<User> UserShowOne(@RequestParam(name = "userOpenId") String userOpenId){
+    @ApiOperation(value = "用户展示" , notes = "单一用户展示")
+    @ApiImplicitParam(value = "用户OpenId" , name = "userOpenId" , required = true, dataType = "String")
+    @ApiResponses({
+            @ApiResponse(code = 0000, message = "获取成功"),
+            @ApiResponse(code = 9999, message = "获取失败")
+    })
+    @GetMapping(value = "wx/show/one")
+    public Response<User> WXUserShowOne(@RequestParam(name = "userOpenId") String userOpenId){
         User user = userService.findUserByOpenId(userOpenId);
+        if (user == null){
+            throw new CommException(CommErrorCodeAndMsg.Network_error);
+        }
         return new Response<>(user);
     }
 
