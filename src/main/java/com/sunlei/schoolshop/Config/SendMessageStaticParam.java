@@ -19,9 +19,9 @@ public class SendMessageStaticParam {
     // 短信API产品域名（接口地址固定，无需修改）
 
     // 替换成你的AK (产品密)
-    public final static String ACCESS_KEY_ID = "LTAIgwimskEEsfAB";
+    public final static String ACCESS_KEY_ID = "b";
     // 你的accessKeyId,填你自己的 上文配置所得  自行配置
-    public final static String ACCESS_KEY_SECRET = "UVVvoclAwJlB3msxtI8e92XXR0w8WC";
+    public final static String ACCESS_KEY_SECRET = "b";
     // 你的accessKeySecret,填你自己的 上文配置所得 自行配置
     // 必填:短信签名-可在短信控制台中找到
     public final static String SIGN_NAME = "校园卖";
